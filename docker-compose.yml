@@ -1,0 +1,22 @@
+services:
+  mfoxdb:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: mfox
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: hwdb
+    ports:
+      - "15000:5432" # my port is 15k; default postgres is 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # service
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgres://mfox:test@mfoxdb:5432/hwdb?sslmode=disable
+    depends_on:
+      - mfoxdb
+    entrypoint: ["./app"]
+volumes:
+  postgres_data:
